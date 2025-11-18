@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import {Button, Platform, StyleSheet} from 'react-native';
 
 import { Collapsible } from '@/components/ui/collapsible';
 import { ExternalLink } from '@/components/external-link';
@@ -8,6 +8,35 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+
+
+export const postBier = async () => {
+
+    const bier = {
+        playerId: 1,
+        amount: -1.5,
+        date: "2023-10-10",
+        description: "Getränk",
+    }
+    try {
+        const response = await fetch('http://192.168.2.182:8080/cost/1', { // oder deine API-URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bier), // player ist ein JS-Objekt mit den Feldern
+        });
+
+        if (!response.ok) {
+            throw new Error('Fehler beim Erstellen des Players');
+        }
+
+        const data = await response.json();
+        console.log('Erfolgreich erstellt:', data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
 export default function TabTwoScreen() {
   return (
@@ -94,6 +123,10 @@ export default function TabTwoScreen() {
           ),
         })}
       </Collapsible>
+        <Button
+            title="Neues Bier"
+            onPress={() => postBier()}
+        />
     </ParallaxScrollView>
   );
 }

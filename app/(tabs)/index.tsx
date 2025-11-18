@@ -6,19 +6,44 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+import {bfvApi} from "bfv-api";
+import {Match} from "@/app/(tabs)/games";
+import {useEffect, useState} from "react";
 
+export type ClubInformation = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  logoPublic: boolean;
+};
+const fetchData = async () => {
+  const teamPermanentId = "016PH6MDKO000000VV0AG811VUDIC8D7";
+  const data = await bfvApi.getClubInformation({queries: { teamPermanentId: teamPermanentId }});
+  return data;
+}
 export default function HomeScreen() {
+  const [clubinfo, setClubinfo] = useState<ClubInformation | null>(null);
+  useEffect(() => {
+    const loadMatches = async () => {
+      const data = await fetchData();
+      setClubinfo(data.data?.club as ClubInformation);
+    };
+    loadMatches();
+  }, []);
+  console.log(clubinfo)
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
+            source={{
+              uri: clubinfo?.logoUrl,
+            }}
           style={styles.reactLogo}
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome!123</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
