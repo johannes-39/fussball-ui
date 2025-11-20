@@ -9,6 +9,8 @@ import { Link } from 'expo-router';
 import {bfvApi} from "bfv-api";
 import {Match} from "@/app/(tabs)/games";
 import {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store/store";
 
 export type ClubInformation = {
   id: string;
@@ -22,6 +24,7 @@ const fetchData = async () => {
   return data;
 }
 export default function HomeScreen() {
+  const { settings } = useSelector((state: RootState) => state.football);
   const [clubinfo, setClubinfo] = useState<ClubInformation | null>(null);
   useEffect(() => {
     const loadMatches = async () => {
@@ -43,7 +46,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!123</ThemedText>
+        <ThemedText type="title">{settings.find(s => s.label === "Club-Name")?.selectedValue ?? "Kein Wert"}</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>

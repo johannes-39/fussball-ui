@@ -5,6 +5,7 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import {Ionicons} from "@expo/vector-icons";
 
 
 export default function TabLayout() {
@@ -15,36 +16,52 @@ export default function TabLayout() {
           screenOptions={{
               tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
               headerShown: false,
+              tabBarStyle: {
+                  height: 70,
+                  paddingTop: 10,
+              },
               tabBarButton: (props) => <HapticTab {...props} />,
           }}>
           <Tabs.Screen
               name="index"
               options={{
                   title: 'Home',
-                  tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-              }}
-          />
-          <Tabs.Screen
-              name="explore"
-              options={{
-                  title: 'Explore',
-                  tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+                  tabBarIcon: ({ color }) => <Ionicons size={28} name="home" color={color} />,
               }}
           />
           <Tabs.Screen
               name="team"
               options={{
                   title: 'Team',
-                  tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle.fill" color={color} />,
+                  tabBarIcon: ({ focused }) =>
+                      <Ionicons
+                          size={28}
+                          name={focused ? "people-circle" : "people-circle-outline"}
+                          color={focused ? Colors[colorScheme ?? 'light'].tint : Colors[colorScheme ?? 'light'].tabIconDefault} />,
               }}
           />
           <Tabs.Screen
               name="games"
               options={{
                   title: 'Spielplan',
-                  tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle.fill" color={color} />,
+                  tabBarIcon: ({ focused }) =>
+                      <Ionicons
+                          size={28}
+                          name={focused ? "calendar" : "calendar-outline"}
+                          color={focused ? Colors[colorScheme ?? 'light'].tint : Colors[colorScheme ?? 'light'].tabIconDefault} />,
               }}
           />
+          {/*<Tabs.Screen*/}
+          {/*      name="settings"*/}
+          {/*      options={{*/}
+          {/*          title: 'Einstellungen',*/}
+          {/*          tabBarIcon: ({ focused }) =>*/}
+          {/*              <Ionicons*/}
+          {/*                  size={28}*/}
+          {/*                  name={focused ? "settings" : "settings-outline"}*/}
+          {/*                  color={focused ? Colors[colorScheme ?? 'light'].tint : Colors[colorScheme ?? 'light'].tabIconDefault} />,*/}
+          {/*      }}*/}
+          {/*/>*/}
 
       </Tabs>
 

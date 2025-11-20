@@ -1,36 +1,27 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Button, Alert, Text } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
+import { StyleSheet, Button } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import PlayerCard from "@/components/player-card";
-import {bfvApi} from "bfv-api";
-import {Match} from "@/app/(tabs)/games";
-import {postBier} from "@/app/(tabs)/explore";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/store/store";
+import {addFootballPlayer, fetchFootballData} from "@/api/footballSlice";
+import {PlayerProps} from "@/api/types";
+import AddPlayer from '@/components/add-player';
+import DialogWindow from "@/components/dialog-window";
 
-export type PlayerProps = {
-    id?: number;           // optional, da beim Erstellen noch nicht vorhanden
-    firstName: string;
-    lastName: string;
-    position: string;
-    birthDate: string;     // ISO-Date String, z.B. "1990-05-01"
-    club: string;
-    number: number;
-    amount?: number;
-}
 
 export default function TabThreeScreen() {
-    const [count, setCount] = useState(0);
-    const [players, setPlayers] = useState<PlayerProps[]>([]);
-
+    const { players, loading, error } = useSelector((state: RootState) => state.football);
+    const [modalVisible, setModalVisible] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
     useEffect(() => {
-        fetch('http://192.168.2.182:8080/players') // URL deiner API
-            .then(response => response.json())
-            .then(data => setPlayers(data))
-            .catch(error => console.error('Error:', error));
-    }, []);
-    console.log(players);
+        dispatch(fetchFootballData()); // ✅ fetch über Thunk
+    }, [dispatch]);
+    const handleAddPlayer = (player: PlayerProps) => {
+        dispatch(addFootballPlayer(player));
+        setModalVisible(false);
+    };
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -43,17 +34,18 @@ export default function TabThreeScreen() {
                 />
             }>
             {
-                players.map((player, index) => (
+                players.map((player: PlayerProps, index) => (
                     <PlayerCard
                         key={index}
                         {...player}
                     />
                 ))
             }
-            <Button
-                title="Neues Bier"
-                onPress={() => postBier()}
-            />
+            <DialogWindow openComponent={<Button title="Neuen Spieler hinzufügen" onPress={() => setModalVisible(true)} />}
+                          open={modalVisible}
+                          onClose={() => setModalVisible(false)}>
+                <AddPlayer  onSubmit={handleAddPlayer} />
+            </DialogWindow>
         </ParallaxScrollView>
 
     );
